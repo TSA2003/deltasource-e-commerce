@@ -22,13 +22,20 @@ public class CartItem {
     }
 
     public void setQuantity(int quantity) {
+        if(quantity < 0) {
+            throw new IllegalArgumentException("Cannot set negative quantity!");
+        }
         this.quantity = quantity;
     }
 
-    // Constructor
+    // Constructors
+    public CartItem() {
+        this.setProduct(new Product());
+    }
+
     public CartItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
+        this.setProduct(product);
+        this.setQuantity(quantity);
     }
 
     // Overriding toString() method from Object

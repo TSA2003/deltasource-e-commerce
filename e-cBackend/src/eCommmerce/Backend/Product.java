@@ -24,13 +24,21 @@ public class Product {
     }
 
     public void setPrice(BigDecimal price) {
+        if(price.compareTo(BigDecimal.valueOf(0)) == -1) {
+            throw new IllegalArgumentException("Cannot set negative price!");
+        }
         this.price = price;
     }
 
-    // Constructor
+    // Constructors
+    public Product() {
+        this.setLabel("Unknown");
+        this.setPrice(new BigDecimal(0));
+    }
+
     public Product(String label, BigDecimal price) {
-        this.label = label;
-        this.price = price;
+        this.setLabel(label);
+        this.setPrice(price);
     }
 
     // Overriding toString() method from Object

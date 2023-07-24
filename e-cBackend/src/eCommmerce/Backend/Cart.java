@@ -10,7 +10,7 @@ public class Cart {
     protected BigDecimal deliveryFee;
 
     // Getters (ONLY ONE GETTER!)
-    // The class user shouldn't receive a reference to cart items (user can manipulate them)
+    // The class user shouldn't receive a reference to cart items to avoid manipulation
     // The delivery fee is set by the calculateOverall method
     public BigDecimal getDeliveryFee() {
         return deliveryFee;
@@ -19,6 +19,7 @@ public class Cart {
     // Constructor
     public Cart() {
         cartItems = new ArrayList<CartItem>();
+        deliveryFee = new BigDecimal(0);
     }
 
     // Overriding toString() method from Object
