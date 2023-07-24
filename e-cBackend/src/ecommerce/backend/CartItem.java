@@ -1,19 +1,26 @@
-package eCommmerce.Backend;
+package eCommerce.backend;
 
 import java.math.BigDecimal;
 
+/** TO DO CartItem */
 public class CartItem {
 
-    // Class fields
-    protected Product product;
-    protected int quantity;
+    private Product product;
+    private int quantity;
 
-    // Getters and setters
+    public CartItem(Product product, int quantity) {
+        setProduct(product);
+        setQuantity(quantity);
+    }
+
     public Product getProduct() {
         return product;
     }
 
     public void setProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product must be initialized");
+        }
         this.product = product;
     }
 
@@ -22,23 +29,12 @@ public class CartItem {
     }
 
     public void setQuantity(int quantity) {
-        if(quantity < 0) {
+        if(quantity <= 0) {
             throw new IllegalArgumentException("Cannot set negative quantity!");
         }
         this.quantity = quantity;
     }
 
-    // Constructors
-    public CartItem() {
-        this.setProduct(new Product());
-    }
-
-    public CartItem(Product product, int quantity) {
-        this.setProduct(product);
-        this.setQuantity(quantity);
-    }
-
-    // Overriding toString() method from Object
     @Override
     public String toString() {
         // Using product.toString() in current toString();
@@ -47,6 +43,6 @@ public class CartItem {
 
     // Method used for calculating cart item price (product.price * product.quantity)
     public BigDecimal calculatePrice() {
-        return product.price.multiply(BigDecimal.valueOf(this.quantity));
+        return product.getPrice().multiply(BigDecimal.valueOf(getQuantity()));
     }
 }

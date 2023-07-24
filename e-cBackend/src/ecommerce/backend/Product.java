@@ -1,21 +1,30 @@
-package eCommmerce.Backend;
+package eCommerce.backend;
 
 import java.math.BigDecimal;
 
+/** TO DO Product */
 public class Product {
 
-    // Class fields
-    protected String label;
+    public final int LESS = -1;
+
+    private String label;
 
     // Note BigDecimal type! Used for price precision
-    protected BigDecimal price;
+    private BigDecimal price;
 
-    // Getters and setters
+    public Product(String label, BigDecimal price) {
+        setLabel(label);
+        setPrice(price);
+    }
+
     public String getLabel() {
         return label;
     }
 
     public void setLabel(String label) {
+        if (label.isEmpty()) {
+            throw new IllegalArgumentException("Label cannot be empty");
+        }
         this.label = label;
     }
 
@@ -24,24 +33,12 @@ public class Product {
     }
 
     public void setPrice(BigDecimal price) {
-        if(price.compareTo(BigDecimal.valueOf(0)) == -1) {
+        if(price.compareTo(BigDecimal.valueOf(0)) == LESS) {
             throw new IllegalArgumentException("Cannot set negative price!");
         }
         this.price = price;
     }
 
-    // Constructors
-    public Product() {
-        this.setLabel("Unknown");
-        this.setPrice(new BigDecimal(0));
-    }
-
-    public Product(String label, BigDecimal price) {
-        this.setLabel(label);
-        this.setPrice(price);
-    }
-
-    // Overriding toString() method from Object
     @Override
     public String toString() {
         return String.format("Label: %s; Price: %.2f", label, price);

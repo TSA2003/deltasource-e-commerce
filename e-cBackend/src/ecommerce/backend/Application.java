@@ -1,4 +1,4 @@
-package eCommmerce.Backend;
+package eCommerce.backend;
 
 // Starting class
 public class Application {
