@@ -1,4 +1,4 @@
-package eCommerce.backend;
+package ecommerce.backend;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class Cart {
 
     public Cart() {
         cartItems = new ArrayList<CartItem>();
-        deliveryFee = new BigDecimal(0);
+        deliveryFee = BigDecimal.ZERO;
     }
 
     @Override
@@ -39,8 +39,10 @@ public class Cart {
     }
 
     public BigDecimal calculatePriceWithVAT() {
-        BigDecimal result = new BigDecimal(0);
-        cartItems.forEach(x -> result.add(x.getProduct().getPrice().add(x.getProduct().getPrice().divide(BigDecimal.valueOf(20)))));
+        BigDecimal result = BigDecimal.ZERO;
+        for (CartItem item : cartItems) {
+            result = result.add(item.calculatePrice()).add(item.calculatePrice().divide(BigDecimal.valueOf(20)));
+        }
 
         return result;
     }

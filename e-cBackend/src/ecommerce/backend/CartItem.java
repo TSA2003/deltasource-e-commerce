@@ -1,4 +1,4 @@
-package eCommerce.backend;
+package ecommerce.backend;
 
 import java.math.BigDecimal;
 
@@ -30,7 +30,7 @@ public class CartItem {
 
     public void setQuantity(int quantity) {
         if(quantity <= 0) {
-            throw new IllegalArgumentException("Cannot set negative quantity!");
+            throw new IllegalArgumentException("Cannot set non-positive quantity!");
         }
         this.quantity = quantity;
     }
