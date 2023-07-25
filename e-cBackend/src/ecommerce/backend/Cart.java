@@ -33,7 +33,7 @@ public class Cart {
     public String toString() {
         StringBuilder result = new StringBuilder();
         cartItems.forEach(item -> result.append(item.toString().concat("\n")));
-        result.append(deliveryFee);
+        result.append("Delivery fee: " + deliveryFee + "\n");
 
         return result.toString();
     }
@@ -41,7 +41,7 @@ public class Cart {
     public BigDecimal calculatePriceWithVAT() {
         BigDecimal result = BigDecimal.ZERO;
         for (CartItem item : cartItems) {
-            result = result.add(item.calculatePrice()).add(item.calculatePrice().divide(BigDecimal.valueOf(20)));
+            result = result.add(item.calculatePrice()).add(item.calculatePrice().multiply(BigDecimal.valueOf(0.2)));
         }
 
         return result;
@@ -64,6 +64,9 @@ public class Cart {
     public void addItem(CartItem item) {
         if (item == null) {
             throw new IllegalArgumentException("Item cannot be null");
+        }
+        if (cartItems.stream().filter(cartItem -> cartItem.getProduct().getLabel() == item.getProduct().getLabel()).count() > 0) {
+            throw new IllegalArgumentException("Item already exists in cart");
         }
         cartItems.add(item);
     }
