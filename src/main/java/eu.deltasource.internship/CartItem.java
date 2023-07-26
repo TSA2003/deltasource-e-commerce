@@ -1,4 +1,4 @@
-package ecommerce.backend;
+package main.java.eu.deltasource.internship;
 
 import java.math.BigDecimal;
 
