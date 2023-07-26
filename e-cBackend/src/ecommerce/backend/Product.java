@@ -2,27 +2,28 @@ package ecommerce.backend;
 
 import java.math.BigDecimal;
 
-/** TO DO Product */
+/** TO DO Product class implementation */
 public class Product {
 
-    public final int LESS = -1;
+    private final int EQUAL = 0;
 
     private String label;
-
-    // Note BigDecimal type! Used for price precision
     private BigDecimal price;
 
     public Product(String label, BigDecimal price) {
-        setLabel(label);
-        setPrice(price);
+        configureLabel(label);
+        configurePrice(price);
     }
 
     public String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
-        if (label.isEmpty()) {
+    private void configureLabel(String label) {
+        if (label == null) {
+            throw new IllegalArgumentException("Label cannot be null");
+        }
+        if (label.trim().isEmpty()) {
             throw new IllegalArgumentException("Label cannot be empty");
         }
         this.label = label;
@@ -32,9 +33,9 @@ public class Product {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
-        if(price.compareTo(BigDecimal.valueOf(0)) == LESS) {
-            throw new IllegalArgumentException("Cannot set negative price!");
+    private void configurePrice(BigDecimal price) {
+        if(price.compareTo(BigDecimal.ZERO) <= EQUAL) {
+            throw new IllegalArgumentException("Cannot set negative price or zero price!");
         }
         this.price = price;
     }

@@ -2,22 +2,22 @@ package ecommerce.backend;
 
 import java.math.BigDecimal;
 
-/** TO DO CartItem */
+/** TO DO CartItem class implementation */
 public class CartItem {
 
     private Product product;
     private int quantity;
 
     public CartItem(Product product, int quantity) {
-        setProduct(product);
-        setQuantity(quantity);
+        configureProduct(product);
+        configureQuantity(quantity);
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    private void configureProduct(Product product) {
         if (product == null) {
             throw new IllegalArgumentException("Product must be initialized");
         }
@@ -28,7 +28,7 @@ public class CartItem {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    private void configureQuantity(int quantity) {
         if(quantity <= 0) {
             throw new IllegalArgumentException("Cannot set non-positive quantity!");
         }
@@ -37,12 +37,10 @@ public class CartItem {
 
     @Override
     public String toString() {
-        // Using product.toString() in current toString();
-        return String.format("%s Quantity: %d", product.toString(), quantity);
+        return String.format("%s Quantity: %d", product, quantity);
     }
 
-    // Method used for calculating cart item price (product.price * product.quantity)
     public BigDecimal calculatePrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(getQuantity()));
+        return getProduct().getPrice().multiply(BigDecimal.valueOf(getQuantity()));
     }
 }
