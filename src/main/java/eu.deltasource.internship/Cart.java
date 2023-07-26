@@ -10,6 +10,11 @@ import java.util.Optional;
 public class Cart {
 
     private final int MORE_THAN = 1;
+    private final BigDecimal DELIVERY_FEE_0 = BigDecimal.ZERO;
+    private final BigDecimal DELIVERY_FEE_5 = BigDecimal.valueOf(5);
+    private final BigDecimal DELIVERY_FEE_10 = BigDecimal.valueOf(10);
+    private final BigDecimal DELIVERY_BOUND_100 = BigDecimal.valueOf(100);
+    private final BigDecimal DELIVERY_BOUND_200 = BigDecimal.valueOf(200);
     private final BigDecimal VAT_RATE = BigDecimal.valueOf(0.2);
 
     private List<CartItem> cartItems;
@@ -17,7 +22,7 @@ public class Cart {
 
     public Cart() {
         cartItems = new ArrayList<CartItem>();
-        deliveryFee = BigDecimal.valueOf(10);
+        deliveryFee = DELIVERY_FEE_10;
     }
 
     /** Returning a read-only copy of cart items */
@@ -58,11 +63,11 @@ public class Cart {
     public BigDecimal calculateTotalPriceWithDeliveryFee() {
         BigDecimal currentCalculatedPrice = calculatePriceWithVAT();
 
-        if (currentCalculatedPrice.compareTo(BigDecimal.valueOf(200)) == MORE_THAN) {
-            deliveryFee = new BigDecimal(0);
+        if (currentCalculatedPrice.compareTo(DELIVERY_BOUND_200) == MORE_THAN) {
+            deliveryFee = DELIVERY_FEE_10;
         }
-        else if (currentCalculatedPrice.compareTo(BigDecimal.valueOf(100)) == MORE_THAN) {
-            deliveryFee = new BigDecimal(5);
+        else if (currentCalculatedPrice.compareTo(DELIVERY_BOUND_100) == MORE_THAN) {
+            deliveryFee = DELIVERY_FEE_5;
         }
 
         return currentCalculatedPrice.add(deliveryFee);
@@ -73,7 +78,7 @@ public class Cart {
         if (item == null) {
             throw new IllegalArgumentException("Item cannot be null");
         }
-        boolean productExistsInCart =  cartItems.stream().
+        boolean productExistsInCart = cartItems.stream().
                 anyMatch(cartItem -> cartItem.getProduct().getLabel() == item.getProduct().getLabel());
         if (productExistsInCart) {
             throw new IllegalArgumentException("Item with this product already exists in cart");

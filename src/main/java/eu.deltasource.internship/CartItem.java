@@ -9,15 +9,15 @@ public class CartItem {
     private int quantity;
 
     public CartItem(Product product, int quantity) {
-        configureProduct(product);
-        configureQuantity(quantity);
+        setProduct(product);
+        setQuantity(quantity);
     }
 
     public Product getProduct() {
         return product;
     }
 
-    private void configureProduct(Product product) {
+    private void setProduct(Product product) {
         if (product == null) {
             throw new IllegalArgumentException("Product must be initialized");
         }
@@ -28,7 +28,7 @@ public class CartItem {
         return quantity;
     }
 
-    private void configureQuantity(int quantity) {
+    public void setQuantity(int quantity) {
         if(quantity <= 0) {
             throw new IllegalArgumentException("Cannot set non-positive quantity!");
         }

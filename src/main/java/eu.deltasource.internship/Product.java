@@ -11,15 +11,15 @@ public class Product {
     private BigDecimal price;
 
     public Product(String label, BigDecimal price) {
-        configureLabel(label);
-        configurePrice(price);
+        setLabel(label);
+        setPrice(price);
     }
 
     public String getLabel() {
         return label;
     }
 
-    private void configureLabel(String label) {
+    private void setLabel(String label) {
         if (label == null) {
             throw new IllegalArgumentException("Label cannot be null");
         }
@@ -33,7 +33,7 @@ public class Product {
         return price;
     }
 
-    private void configurePrice(BigDecimal price) {
+    private void setPrice(BigDecimal price) {
         if(price.compareTo(BigDecimal.ZERO) <= EQUAL) {
             throw new IllegalArgumentException("Cannot set negative price or zero price!");
         }
