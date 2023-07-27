@@ -64,10 +64,13 @@ public class Cart {
         BigDecimal currentCalculatedPrice = calculatePriceWithVAT();
 
         if (currentCalculatedPrice.compareTo(DELIVERY_BOUND_200) == MORE_THAN) {
-            deliveryFee = DELIVERY_FEE_10;
+            deliveryFee = DELIVERY_FEE_0;
         }
         else if (currentCalculatedPrice.compareTo(DELIVERY_BOUND_100) == MORE_THAN) {
             deliveryFee = DELIVERY_FEE_5;
+        }
+        else {
+            deliveryFee = DELIVERY_FEE_10;
         }
 
         return currentCalculatedPrice.add(deliveryFee);
@@ -86,22 +89,13 @@ public class Cart {
         cartItems.add(item);
     }
 
-    /** Method used for removing single item from cart */
-    public void removeItem(String label) {
-        if (label == null) {
-            throw new IllegalArgumentException("Label cannot be null");
+    /** Remove item by entire object */
+    public void removeItem(CartItem itemToRemove) {
+        if (itemToRemove == null) {
+            throw new IllegalArgumentException("Cart item cannot be null");
         }
-        if (label.trim().isEmpty()) {
-            throw new IllegalArgumentException("Label cannot be empty");
-        }
-        Optional<CartItem> itemToRemove =  cartItems.stream().
-                filter(cartItem -> cartItem.getProduct().getLabel() == label).
-                findFirst();
 
-        if (itemToRemove.isEmpty()) {
-            throw new IllegalArgumentException("Item with this product doesn't exist in cart");
-        }
-        cartItems.remove(itemToRemove.get());
+        cartItems.remove(itemToRemove);
     }
 
 }

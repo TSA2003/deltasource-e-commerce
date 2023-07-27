@@ -48,4 +48,34 @@ public class SimulateECommerce {
             System.out.println(item.toString() + "Total Price: " + String.format("%.2f", item.calculateTotalPriceWithDeliveryFee()));
         }
     }
+
+    public static void runSimple() {
+        // Add test products
+        Product keyboard = new Product("Keyboard", BigDecimal.valueOf(30));
+        Product mouse = new Product("Mouse", BigDecimal.valueOf(20));
+
+        // Add test cart items
+        CartItem item1 = new CartItem(keyboard, 2);
+        CartItem item2 = new CartItem(mouse, 3);
+
+        // Add test cart
+        Cart cart = new Cart();
+        cart.addItem(item1);
+        cart.addItem(item2);
+
+        // Show cart price
+        System.out.println("Cart price: \n" + cart.calculateTotalPriceWithDeliveryFee() + "\n");
+
+        // Change item2 quantity
+        item2.setQuantity(1);
+
+        // Show cart price
+        System.out.println("Cart price after item2 quantity change: \n" + cart.calculateTotalPriceWithDeliveryFee() + "\n");
+
+        // Remove item2 as passing the object itself as argument
+        cart.removeItem(item2);
+
+        // Show cart price
+        System.out.println("Cart price without item2: \n" + cart.calculateTotalPriceWithDeliveryFee() + "\n");
+    }
 }
