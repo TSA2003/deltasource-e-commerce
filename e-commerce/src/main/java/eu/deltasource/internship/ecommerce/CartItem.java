@@ -40,16 +40,10 @@ public class CartItem {
         return String.format("%s Quantity: %d", product, quantity);
     }
 
-    public BigDecimal calculatePrice(boolean isLoyaltyCardActive) {
+    public BigDecimal calculatePrice() {
         BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(getQuantity());
-        BigDecimal result = product.getPrice();
+        BigDecimal price = product.getPrice();
 
-        if (product.isDiscounted()) {
-            result = product.getDiscountedPrice();
-        } else if (product.isLoyaltyDiscounted() && isLoyaltyCardActive) {
-            result = product.getLoyaltyDiscountedPrice();
-        }
-
-        return result.multiply(quantityAsBigDecimal);
+        return price.multiply(quantityAsBigDecimal);
     }
 }

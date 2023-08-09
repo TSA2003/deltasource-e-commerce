@@ -1,6 +1,7 @@
 package eu.deltasource.internship.ecommerce;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,6 @@ public class Cart {
     private final BigDecimal DELIVERY_FEE_10 = BigDecimal.valueOf(10);
     private final BigDecimal DELIVERY_BOUND_100 = BigDecimal.valueOf(100);
     private final BigDecimal DELIVERY_BOUND_200 = BigDecimal.valueOf(200);
-    private final BigDecimal VAT_RATE = BigDecimal.valueOf(0.2);
 
     private List<CartItem> cartItems;
     private BigDecimal deliveryFee;
@@ -46,23 +46,21 @@ public class Cart {
     }
 
     /** This method is used as a helper method to the one below which calculates total price with delivery fee */
-    private BigDecimal calculatePriceWithVAT(boolean isLoyaltyCardActive) {
-        BigDecimal currentCalculatedPrice = BigDecimal.ZERO;
-
-        for (CartItem item : cartItems) {
-            BigDecimal currentItemPrice = item.calculatePrice(isLoyaltyCardActive);
-            BigDecimal currentItemPriceWithVAT = currentItemPrice
-                    .add(currentItemPrice.multiply(VAT_RATE));
-
-            currentCalculatedPrice = currentCalculatedPrice.add(currentItemPriceWithVAT);
-        }
-
-        return currentCalculatedPrice;
+    private BigDecimal calculatePrice() {
+        return cartItems.stream().map(item -> item.calculatePrice()).
+                reduce(BigDecimal.ZERO, (current, next) -> current.add(next));
     }
 
     /** This method calculates the overall price of items in cart including VAT and delivery fee */
-    public BigDecimal calculateTotalPriceWithDeliveryFee(boolean isLoyaltyCardActive) {
-        BigDecimal currentCalculatedPrice = calculatePriceWithVAT(isLoyaltyCardActive);
+    public BigDecimal calculateTotalPrice(boolean isLoyaltyCardActive) {
+        BigDecimal currentCalculatedPrice = calculatePrice();
+        BigDecimal discount = BigDecimal.ZERO;
+
+        if (isLoyaltyCardActive) {
+            discount = getLoyaltyCardDiscount();
+        }
+
+        currentCalculatedPrice = currentCalculatedPrice.subtract(discount);
 
         if (currentCalculatedPrice.compareTo(DELIVERY_BOUND_200) == MORE_THAN) {
             deliveryFee = DELIVERY_FEE_0;
@@ -99,4 +97,15 @@ public class Cart {
         cartItems.remove(itemToRemove);
     }
 
+    public int getNumberOfSpecialProducts () {
+        return (int) cartItems.stream().
+                filter(item -> item.getProduct().isDiscounted() || item.getProduct().hasLoyaltyDiscount()).
+                map(item -> item.getQuantity()).reduce(0, (current, next) -> current + next);
+    }
+
+    private BigDecimal getLoyaltyCardDiscount() {
+        return cartItems.stream().
+                map(item -> item.getProduct().applyLoyaltyDiscount().multiply(BigDecimal.valueOf(item.getQuantity()))).
+                reduce(BigDecimal.ZERO, (current, next) -> current.add(next));
+    }
 }

@@ -1,11 +1,12 @@
 package eu.deltasource.internship.ecommerce;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Server {
-    private static Date currentTime;
+    private static LocalDate currentTime;
 
-    public static Date getCurrentTime() {
+    public static LocalDate getCurrentTime() {
         return currentTime;
     }
 
