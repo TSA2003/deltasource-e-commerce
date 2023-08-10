@@ -16,6 +16,7 @@ public class Cart {
     private final BigDecimal DELIVERY_FEE_10 = BigDecimal.valueOf(10);
     private final BigDecimal DELIVERY_BOUND_100 = BigDecimal.valueOf(100);
     private final BigDecimal DELIVERY_BOUND_200 = BigDecimal.valueOf(200);
+    private final int ZERO = 0;
 
     private List<CartItem> cartItems;
     private BigDecimal deliveryFee;
@@ -76,36 +77,49 @@ public class Cart {
     }
 
     /** Method used for adding new items to cart (Parameter item comes from upper app layer) */
-    public void addItem(CartItem item) {
-        if (item == null) {
+    public void addItem(CartItem itemToAdd) {
+        if (itemToAdd == null) {
             throw new IllegalArgumentException("Item cannot be null");
         }
+
         boolean productExistsInCart = cartItems.stream().
-                anyMatch(cartItem -> cartItem.getProduct().getLabel() == item.getProduct().getLabel());
+                anyMatch(cartItem -> cartItem.getProduct().getLabel() == itemToAdd.getProduct().getLabel());
+
         if (productExistsInCart) {
             throw new IllegalArgumentException("Item with this product already exists in cart");
         }
-        cartItems.add(item);
+
+        cartItems.add(itemToAdd);
+    }
+
+    public void updateItem(int itemIndex, int newQuantity) {
+        if (itemIndex < ZERO || itemIndex > cartItems.stream().count()) {
+            throw new IllegalArgumentException("Index is out of range");
+        }
+
+        CartItem productToUpdate = cartItems.get(itemIndex);
+        productToUpdate.setQuantity(newQuantity);
     }
 
     /** Remove item by entire object */
-    public void removeItem(CartItem itemToRemove) {
-        if (itemToRemove == null) {
-            throw new IllegalArgumentException("Cart item cannot be null");
+    public void removeItem(int itemIndex) {
+        if (itemIndex < ZERO || itemIndex > cartItems.stream().count()) {
+            throw new IllegalArgumentException("Index is out of range");
         }
 
-        cartItems.remove(itemToRemove);
+        CartItem productToRemove = cartItems.get(itemIndex);
+        cartItems.remove(productToRemove);
     }
 
     public int getNumberOfSpecialProducts () {
         return (int) cartItems.stream().
-                filter(item -> item.getProduct().isDiscounted() || item.getProduct().hasLoyaltyDiscount()).
+                filter(item -> item.getProduct().isDiscounted() || item.getProduct().isLoyaltyDiscounted()).
                 map(item -> item.getQuantity()).reduce(0, (current, next) -> current + next);
     }
 
     private BigDecimal getLoyaltyCardDiscount() {
         return cartItems.stream().
-                map(item -> item.getProduct().applyLoyaltyDiscount().multiply(BigDecimal.valueOf(item.getQuantity()))).
+                map(item -> item.getProduct().getLoyaltyDiscount().multiply(BigDecimal.valueOf(item.getQuantity()))).
                 reduce(BigDecimal.ZERO, (current, next) -> current.add(next));
     }
 }
