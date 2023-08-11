@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class Server {
 
-    private static LocalDate currentTime;
+    private static LocalDate currentTime = LocalDate.of(2014, 1, 1);
     private static List<User> users;
     private static List<Family> families;
     private static List<LoyaltyCard> loyaltyCards;
