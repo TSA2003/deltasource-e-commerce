@@ -42,6 +42,6 @@ public class Server {
     }
 
     private static void updateUsersInfo() {
-        users.forEach(user -> user.updateCurrentPeriodInfo());
+        // users.forEach(user -> user.updateCurrentPeriodInfo());
     }
 }

@@ -1,16 +1,14 @@
 package eu.deltasource.internship.ecommerce;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class User {
 
-    private static final int SPECIAL_PRODUCTS_LIMIT = 5;
-    private static final BigDecimal LOYALTY_CARD_ACTIVATION_LIMIT = BigDecimal.valueOf(1000);
     private static final int MONTH = 30;
     private static final int EQUAL = 0;
+    private static final int MINIMUM_AGE = 8;
 
     private String username;
     private String password;
@@ -18,18 +16,14 @@ public class User {
     private List<Cart> orderHistory;
     private Cart currentOrder;
     private LoyaltyCard loyaltyCard;
-    private LocalDate currentPeriodStart;
-    private LocalDate currentPeriodEnd;
-    private BigDecimal moneySpentInPeriod;
+    private ShoppingPeriod currentPeriod;
     private Family family;
 
-    public User(String username, String password, int age) {
+    public User(String username, String password, int age, ShoppingPeriod period) {
         setUsername(username);
         setPassword(password);
         setAge(age);
-        setCurrentPeriodStart();
-        setCurrentPeriodEnd();
-        moneySpentInPeriod = BigDecimal.ZERO;
+        setShoppingPeriod(period);
         orderHistory = new ArrayList<Cart>();
         currentOrder = new Cart();
     }
@@ -38,78 +32,51 @@ public class User {
         return username;
     }
 
-    private void setUsername(String username) {
-        this.username = username;
+    private void setUsername(String newUsername) {
+        username = newUsername;
     }
 
     public String getPassword() {
         return password;
     }
 
-    private void setPassword(String password) {
-        this.password = password;
+    private void setPassword(String newPassword) {
+        password = newPassword;
     }
 
     public int getAge() {
         return age;
     }
 
-    private void setAge(int age) {
-        this.age = age;
+    private void setAge(int newAge) {
+        if (newAge < MINIMUM_AGE) {
+            throw new IllegalArgumentException("The user is below required age");
+        }
+        age = newAge;
     }
 
     public List<Cart> getOrderHistory() {
         return orderHistory;
     }
 
-
     public Cart getCurrentOrder() {
         return currentOrder;
     }
-
 
     public LoyaltyCard getCard() {
         return loyaltyCard;
     }
 
-    public LocalDate getCurrentPeriodStart() {
-        return currentPeriodStart;
-    }
-
-    private void setCurrentPeriodStart() {
-        currentPeriodStart = Server.getCurrentTime();
-    }
-
-    public LocalDate getCurrentPeriodEnd() {
-        return currentPeriodEnd;
-    }
-
-    public void setCurrentPeriodEnd() {
-        currentPeriodEnd = currentPeriodStart.plusDays(MONTH);
-    }
-
-    public BigDecimal getMoneySpentInPeriod() {
-        return moneySpentInPeriod;
-    }
-
-    public void addItemToCart(CartItem item) {
-        if (isSpecialProductLimitReached()) {
-            throw new IllegalArgumentException();
-        }
-
-        currentOrder.addItem(item);
-    }
-
-    public void updateExistingItemQuantity(int itemIndex, int newQuantity) {
-        currentOrder.updateItem(itemIndex, newQuantity);
-    }
-
-    public void removeExistingItem(int itemIndex) {
-        currentOrder.removeItem(itemIndex);
-    }
-
     public boolean isLoyaltyCardPresent() {
         return loyaltyCard != null;
+    }
+
+    public ShoppingPeriod getShoppingPeriod() {
+        return currentPeriod;
+    }
+
+    public void setShoppingPeriod(ShoppingPeriod newPeriod) {
+        currentPeriod = newPeriod;
     }
 
     public boolean isPartOfFamily() {
@@ -128,47 +95,26 @@ public class User {
         }
     }
 
-    public void completeOrder(String loyaltyCardId) {
-        boolean loyaltyCardUsed = false;
-
-        if (loyaltyCardId == loyaltyCard.getId()) {
-            loyaltyCardUsed = true;
+    public void completeOrder(boolean isLoyaltyCardActive) {
+        boolean isDiscountActive = true;
+        int currentOrderSpecialProducts = currentOrder.getNumberOfSpecialProducts();
+        currentPeriod.increaseSpecialProductsBought(currentOrderSpecialProducts);
+        if (currentPeriod.isSpecialProductLimitReached()) {
+            isDiscountActive = false;
         }
-
-
-        BigDecimal price = currentOrder.calculateTotalPrice(loyaltyCardUsed);
-        moneySpentInPeriod.add(price);
-
-        if (isPeriodTargetMoneyReached()) {
+        BigDecimal totalPrice = currentOrder.calculateTotalPrice(isLoyaltyCardActive);
+        currentPeriod.increaseMoneySpent(totalPrice);
+        if (currentPeriod.isPeriodTargetMoneyReached()) {
             configureLoyaltyCard();
         }
-
         Cart legacyOrder = new Cart();
         copyCurrentOrderItems(legacyOrder);
         orderHistory.add(legacyOrder);
-
         currentOrder = new Cart();
-    }
-
-    private boolean isSpecialProductLimitReached() {
-        return currentOrder.getNumberOfSpecialProducts() >= SPECIAL_PRODUCTS_LIMIT;
-    }
-
-    private boolean isPeriodTargetMoneyReached() {
-        return moneySpentInPeriod.compareTo(LOYALTY_CARD_ACTIVATION_LIMIT) >= EQUAL;
     }
 
     private void copyCurrentOrderItems(Cart destination) {
         currentOrder.getCartItems().forEach(item -> destination.addItem(item));
     }
 
-    public void updateCurrentPeriodInfo() {
-        LocalDate currentTime = Server.getCurrentTime();
-        if (currentTime.isAfter(currentPeriodEnd)) {
-            configureLoyaltyCard();
-            currentPeriodStart = currentTime;
-            currentPeriodEnd = currentTime.plusDays(30);
-            moneySpentInPeriod = BigDecimal.ZERO;
-        }
-    }
 }

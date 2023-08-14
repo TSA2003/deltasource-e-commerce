@@ -16,7 +16,7 @@ public class Family {
 
     }
 
-    public List<User> getFamilyMembers() {
+    public List<User> getMembers() {
         List<User> temp = new ArrayList<User>(members);
         return Collections.unmodifiableList(temp);
     }
@@ -27,15 +27,23 @@ public class Family {
 
     public void addMember(User newMember) {
         boolean isNewMemberAdult = newMember.getAge() >= ADOLESCENCE_AGE;
-
         if (members.stream().count() == MAXIMUM_FAMILY_MEMBERS) {
             throw new IllegalArgumentException("Maximum family members number reached.");
         }
-
         if (isNewMemberAdult && getAdultMembersCount() == MAXIMUM_ADULT_MEMBERS) {
             throw new IllegalArgumentException("Maximum adult family members number reached.");
         }
-
         members.add(newMember);
+    }
+
+    public List<Cart> getOrderHistory() {
+        List<Cart> orderHistory = new ArrayList<Cart>();
+        members.forEach(member -> orderHistory.addAll(member.getOrderHistory()));
+
+        return orderHistory;
+    }
+
+    public boolean isLoyaltyCardPresent() {
+        return members.stream().anyMatch(member -> member.isLoyaltyCardPresent());
     }
 }

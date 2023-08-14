@@ -46,4 +46,11 @@ public class CartItem {
 
         return price.multiply(quantityAsBigDecimal);
     }
+
+    public BigDecimal calculateDiscountedPrice() {
+        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(getQuantity());
+        BigDecimal price = product.getDiscountedPrice();
+
+        return price.multiply(quantityAsBigDecimal);
+    }
 }
