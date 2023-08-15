@@ -45,7 +45,7 @@ public class Cart {
     }
 
     public void updateItem(int itemIndex, int newQuantity) {
-        if (itemIndex < 0 || itemIndex > cartItems.stream().count()) {
+        if (itemIndex < 0 || itemIndex >= cartItems.stream().count()) {
             throw new IllegalArgumentException("Index is out of range");
         }
         CartItem productToUpdate = cartItems.get(itemIndex);
@@ -54,7 +54,7 @@ public class Cart {
 
     /** Remove item by entire object */
     public void removeItem(int itemIndex) {
-        if (itemIndex < 0 || itemIndex > cartItems.stream().count()) {
+        if (itemIndex < 0 || itemIndex >= cartItems.stream().count()) {
             throw new IllegalArgumentException("Index is out of range");
         }
         CartItem productToRemove = cartItems.get(itemIndex);

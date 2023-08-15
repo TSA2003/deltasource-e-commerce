@@ -43,7 +43,7 @@ public class Family {
         return orderHistory;
     }
 
-    public boolean isLoyaltyCardPresent() {
-        return members.stream().anyMatch(member -> member.isLoyaltyCardPresent());
+    public boolean isLoyaltyCardAvailable() {
+        return members.stream().anyMatch(member -> member.isLoyaltyCardAvailable());
     }
 }

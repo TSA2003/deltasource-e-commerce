@@ -60,7 +60,7 @@ public class ProductTest {
         String label = "Test";
         BigDecimal price = BigDecimal.valueOf(100);
         LocalDate discountStart = LocalDate.now().plusDays(10);
-        LocalDate discountEnd = discountStart.plusDays(10);
+        LocalDate discountEnd = LocalDate.now().plusDays(20);
         BigDecimal discountRate = BigDecimal.valueOf(0.1);
         Discount discount = new Discount(discountStart, discountEnd, discountRate);
         Product product = new Product(label, price);

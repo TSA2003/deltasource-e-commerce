@@ -25,7 +25,7 @@ public class DiscountTest {
     }
 
     @Test
-    public void testDiscountCannotBeBelow0() {
+    public void testDiscountRateCannotBeBelow0() {
         // Given
         LocalDate discountStart = LocalDate.now();
         LocalDate discountEnd = discountStart.plusDays(10);
@@ -41,7 +41,7 @@ public class DiscountTest {
     }
 
     @Test
-    public void testDiscountCannotBeAbove1() {
+    public void testDiscountRateCannotBeAbove1() {
         // Given
         LocalDate discountStart = LocalDate.now();
         LocalDate discountEnd = discountStart.plusDays(10);

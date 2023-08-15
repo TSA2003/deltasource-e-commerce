@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class ShoppingPeriod {
 
-    private static final int SPECIAL_PRODUCTS_LIMIT = 5;
+    private static final int SPECIAL_PRODUCTS_LIMIT = 100;
     private static final BigDecimal LOYALTY_CARD_ACTIVATION_LIMIT = BigDecimal.valueOf(1000);
 
     private LocalDate startDate;
@@ -33,7 +33,7 @@ public class ShoppingPeriod {
     }
 
     public void setEndDate(LocalDate end) {
-        if (endDate.isBefore(startDate)) {
+        if (end.isBefore(startDate)) {
             throw new IllegalArgumentException("Discount end date shouldn't be before start date");
         }
         endDate = end;
@@ -61,7 +61,11 @@ public class ShoppingPeriod {
         return specialProductsBought >= SPECIAL_PRODUCTS_LIMIT;
     }
 
-    public boolean isPeriodTargetMoneyReached() {
+    public boolean isTargetMoneyReached() {
         return moneySpent.compareTo(LOYALTY_CARD_ACTIVATION_LIMIT) >= 0;
+    }
+
+    public boolean isExpired() {
+        return LocalDate.now().isAfter(endDate);
     }
 }

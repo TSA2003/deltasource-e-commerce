@@ -9,6 +9,7 @@ public class User {
     private static final int MONTH = 30;
     private static final int EQUAL = 0;
     private static final int MINIMUM_AGE = 8;
+    private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
     private String username;
     private String password;
@@ -33,6 +34,12 @@ public class User {
     }
 
     private void setUsername(String newUsername) {
+        if (newUsername == null) {
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+        if (newUsername.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
         username = newUsername;
     }
 
@@ -41,6 +48,10 @@ public class User {
     }
 
     private void setPassword(String newPassword) {
+        if (newPassword.length() < MINIMUM_PASSWORD_LENGTH) {
+            throw new IllegalArgumentException("Password must be at least 8 symbols long");
+        }
+
         password = newPassword;
     }
 
@@ -63,12 +74,15 @@ public class User {
         return currentOrder;
     }
 
-    public LoyaltyCard getCard() {
+    public LoyaltyCard getLoyaltyCard() {
         return loyaltyCard;
     }
 
-    public boolean isLoyaltyCardPresent() {
-        return loyaltyCard != null;
+    public void setLoyaltyCard(LoyaltyCard card) {
+        if (card == null) {
+            throw new IllegalArgumentException("Loyalty card cannot be null");
+        }
+        loyaltyCard = card;
     }
 
     public ShoppingPeriod getShoppingPeriod() {
@@ -76,6 +90,9 @@ public class User {
     }
 
     public void setShoppingPeriod(ShoppingPeriod newPeriod) {
+        if (newPeriod == null) {
+            throw new IllegalArgumentException("Period cannot be null");
+        }
         currentPeriod = newPeriod;
     }
 
@@ -83,30 +100,32 @@ public class User {
         return family != null;
     }
 
-    public void specifyFamily(Family family) {
+    public void setFamily(Family family) {
+
         this.family = family;
     }
 
-    private void configureLoyaltyCard() {
-        if (isLoyaltyCardPresent()) {
-            loyaltyCard.renew();
-        } else {
-            loyaltyCard = new LoyaltyCard();
+    public boolean isLoyaltyCardAvailable() {
+        if (loyaltyCard == null) {
+            return false;
         }
+
+        return loyaltyCard.isActive();
     }
 
-    public void completeOrder(boolean isLoyaltyCardActive) {
+    public void completeOrder(boolean isLoyaltyCardChosen) {
         boolean isDiscountActive = true;
         int currentOrderSpecialProducts = currentOrder.getNumberOfSpecialProducts();
         currentPeriod.increaseSpecialProductsBought(currentOrderSpecialProducts);
         if (currentPeriod.isSpecialProductLimitReached()) {
             isDiscountActive = false;
         }
-        BigDecimal totalPrice = currentOrder.calculateTotalPrice(isLoyaltyCardActive);
-        currentPeriod.increaseMoneySpent(totalPrice);
-        if (currentPeriod.isPeriodTargetMoneyReached()) {
-            configureLoyaltyCard();
+        BigDecimal totalPrice = currentOrder.calculateTotalPrice(isDiscountActive);
+        if (isLoyaltyCardChosen && isLoyaltyCardAvailable()) {
+            BigDecimal loyaltyCardDiscount = currentOrder.getLoyaltyCardDiscount();
+            totalPrice = totalPrice.subtract(loyaltyCardDiscount);
         }
+        currentPeriod.increaseMoneySpent(totalPrice);
         Cart legacyOrder = new Cart();
         copyCurrentOrderItems(legacyOrder);
         orderHistory.add(legacyOrder);
