@@ -1,4 +1,4 @@
-package main.java.eu.deltasource.internship;
+package eu.deltasource.internship.ecommerce;
 
 import java.math.BigDecimal;
 
@@ -41,6 +41,16 @@ public class CartItem {
     }
 
     public BigDecimal calculatePrice() {
-        return getProduct().getPrice().multiply(BigDecimal.valueOf(getQuantity()));
+        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(getQuantity());
+        BigDecimal price = product.getPrice();
+
+        return price.multiply(quantityAsBigDecimal);
+    }
+
+    public BigDecimal calculateDiscountedPrice() {
+        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(getQuantity());
+        BigDecimal price = product.getDiscountedPrice();
+
+        return price.multiply(quantityAsBigDecimal);
     }
 }
